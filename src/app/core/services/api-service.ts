@@ -11,10 +11,10 @@ export class ApiService implements BaseApiService<any> {
   private readonly _httpClient = inject(HttpClient);
   private readonly _baseUrl = environment.dev.apiUrl;
 
-  get<T>(request: Request): Observable<TResponse<T[]>> {
+  get<T>(request: Request): Observable<T[]> {
     const url = request.id ? `${this._baseUrl}${request.url}/${request.id}` : `${this._baseUrl}${request.url}`;
     return this._httpClient.get<T[]>(url).pipe(
-      catchError(() => of(null))
+      catchError(() => of([]))
     );
   }
 
