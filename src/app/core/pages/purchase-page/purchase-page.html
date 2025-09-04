@@ -1,13 +1,103 @@
 <app-page-layout>
-  <mat-stepper orientation="vertical" [linear]="true" #stepper>
-    <mat-step label="Seleccionar usuario" [stepControl]="">
-      <p>Content for Step 1</p>
-    </mat-step>
-    <mat-step label="Seleccionar producto" [stepControl]="">
-      <p>Content for Step 2</p>
-    </mat-step>
-    <mat-step label="Revisar y confirmar">
-      <p>Content for Step 3</p>
+  <div class="p-6 flex gap-4 w-full ">
+    <mat-stepper orientation="vertical" [linear]="true" #stepper class="flex-1 bg-white rounded-lg shadow-md p-4">
+      <mat-step label="Seleccionar usuario">
+        <mat-form-field class="w-full mb-6">
+          <mat-label>Usuario</mat-label>
+          <mat-select [(ngModel)]="selectedPersonId" name="person">
+            @for (person of Persons(); track person) {
+              <mat-option [value]="person.id">
+                {{person.firstName}} {{person.lastName}} - {{person.email}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <button (click)="createOrder()" matButton matStepperNext class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          Siguiente
+        </button>
       </mat-step>
-  </mat-stepper>
+      <mat-step label="Seleccionar producto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto pr-2">
+          @for(item of Items(); track item) {
+            <mat-card class="example-card border border-gray-200 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-200 bg-gradient-to-br from-white via-gray-50 to-gray-100 overflow-hidden">
+              <mat-card-header class="p-4">
+                <mat-card-title class="text-lg font-bold text-gray-800 truncate">{{item.name}}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="px-4 pb-2">
+                <p class="text-gray-600 text-sm truncate">Descripción del producto...</p>
+              </mat-card-content>
+              <mat-card-footer class="flex items-center justify-between mt-2 px-4 pb-4">
+                <mat-chip-set aria-label="Precio">
+                  <mat-chip class="bg-green-100 text-green-700 font-semibold">Precio: Q{{item.price}}.00</mat-chip>
+                </mat-chip-set>
+                <button mat-raised-button color="primary"
+                  class="ml-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
+                  (click)="addItemToCart(item)">
+                  Agregar al carrito
+                </button>
+              </mat-card-footer>
+            </mat-card>
+          }
+        </div>
+      </mat-step>
+      <mat-step label="Revisar y confirmar">
+        <h2>Resumen de la compra</h2>
+        <h3>No. Order {{OrderModelResponse()?.number}}</h3>
+        <p>Usuario: {{OrderModelResponse()?.person?.firstName}} {{OrderModelResponse()?.person?.lastName}}</p>
+        <p>Correo: {{OrderModelResponse()?.person?.email}}</p>
+        @for (items of OrderModelResponse()?.orderDetails; track $index) {
+          <div class="border-b border-gray-300 py-2 flex justify-between">
+            <div>
+              <p class="font-semibold">{{items.itemName}}</p>
+              <p class="text-sm text-gray-600">Precio Unidad: {{items.itemPrice}}</p>
+              <p class="text-sm text-gray-600">Cantidad: {{items.quantity}}</p>
+            </div>
+            <div class="text-right">
+              <p class="font-semibold">Q{{items.total}}.00</p>
+            </div>
+          </div>
+        }
+      </mat-step>
+    </mat-stepper>
+    <div class="mt-8 flex-1">
+      <h2 class="text-xl font-bold mb-4 text-gray-800">Carrito</h2>
+      <div class="space-y-4 max-h-80 overflow-y-auto pr-2">
+        @for (cartItem of CartItems(); track cartItem.id) {
+          <mat-card class="example-card border border-gray-200 rounded-xl shadow-lg bg-gradient-to-br from-white via-gray-50 to-gray-100 overflow-hidden">
+            <mat-card-header class="p-4">
+              <mat-card-title class="text-lg font-bold text-gray-800 truncate">
+                {{findItemForCart(cartItem.id)?.name}}
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-footer class="flex items-center justify-between mt-2 px-4 pb-4">
+              <mat-chip-set aria-label="Precio">
+                <mat-chip class="bg-green-100 text-green-700 font-semibold">
+                  Precio: Q{{findItemForCart(cartItem.id)?.price}}.00
+                </mat-chip>
+              </mat-chip-set>
+              <div>
+                <mat-form-field>
+                  <mat-label>Cantidad</mat-label>
+                  <input matInput type="number" min="1"
+                    [(ngModel)]="cartItem.quantity"
+                    (ngModelChange)="updateCartItemQuantity(cartItem.id, $event)" />
+                </mat-form-field>
+                <button mat-raised-button color="primary"
+                  class="ml-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+                  (click)="removeItemFromCart(findItemForCart(cartItem.id)!)">
+                  Eliminar del carrito
+                </button>
+              </div>
+
+            </mat-card-footer>
+          </mat-card>
+        }
+        <button matStepperNext matButton
+          (click)="confirmPurchase()"
+          class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition mt-4">
+          Confirmar compra
+        </button>
+      </div>
+    </div>
+  </div>
 </app-page-layout>

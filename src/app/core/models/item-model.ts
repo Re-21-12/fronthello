@@ -8,3 +8,7 @@ export interface ItemModel {
     updatedAt:    null;
     orderDetails: any[];
 }
+
+export interface IQuantityItemModel extends ItemModel {
+    quantity: number;
+}

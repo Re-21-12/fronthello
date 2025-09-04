@@ -47,7 +47,7 @@ export class DynamicView {
 
   getAll = () => {
     const request = { url: `/${this.selectedForm}` };
-    this.currentService?.get<any>(request).subscribe({
+    this.currentService?.getOne<any>(request).subscribe({
       next: (data: any) => {
         this.dataSelected$.next(data);
       },
@@ -57,7 +57,7 @@ export class DynamicView {
 
   getById = (id: number) => {
     const request = { url: `/${this.selectedForm}`, id };
-    return this.currentService?.get<any>(request);
+    return this.currentService?.getOne<any>(request);
   }
 
   create = (data: any) => {

@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 
-export type TResponse<T> = T | null | boolean;
 export interface Request {
   url: string;
   body?: any;
@@ -8,11 +7,12 @@ export interface Request {
 }
 export interface BaseApiService<T> {
 
-  get<T>(request: Request): Observable<TResponse<T[]>>;
+  getOne<T>(request: Request): Observable<T>;
+  getMany<T>(request: Request): Observable<T[]>;
 
-  post<T>(request: Request): Observable<TResponse<T>>;
+  post<T>(request: Request): Observable<T>;
 
-  put<T>(request: Request): Observable<TResponse<T>>;
+  put<T>(request: Request): Observable<T>;
 
-  delete<T>(request: Request): Observable<TResponse<boolean>>;
+  delete<T>(request: Request): Observable<boolean>;
 }

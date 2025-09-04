@@ -31,6 +31,5 @@ export const appConfig: ApplicationConfig = {
       }
     },
     { provide: MAT_DATE_LOCALE, useValue: 'es-AR' },
-    {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}}
   ]
 };
